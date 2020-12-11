@@ -1,0 +1,70 @@
+---
+title: "wine"
+output:
+  pdf_document: default
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+redwine<-read.table('winequality-red.csv',sep = ";",T)
+redwinefit<-lm(quality~fixed.acidity+volatile.acidity+citric.acid+residual.sugar+chlorides+free.sulfur.dioxide+total.sulfur.dioxide+density+pH+sulphates+alcohol, data = redwine)
+summary(redwinefit)
+pairs(redwine, main="pairsplot-red wine")
+cor(redwine)
+redwinefit1<-lm(quality~fixed.acidity+volatile.acidity+citric.acid+residual.sugar+chlorides+free.sulfur.dioxide+total.sulfur.dioxide+density+pH+sulphates+alcohol+free.sulfur.dioxide:total.sulfur.dioxide, data = redwine)
+summary(redwinefit1)
+coefficients(redwinefit)
+confint(redwinefit)
+library(car)
+vif(redwinefit)
+sqrt(vif(redwinefit))>2
+library(MASS)
+stepAIC(redwinefit,direction = "backward")
+library(leaps)
+leapsredwine<-regsubsets(quality~fixed.acidity+volatile.acidity+citric.acid+residual.sugar+chlorides+free.sulfur.dioxide+total.sulfur.dioxide+density+pH+sulphates+alcohol, data = redwine, nbest = 4)
+plot(leapsredwine,scale="adjr2")
+redwinefit0<-lm(quality~volatile.acidity+chlorides+free.sulfur.dioxide+total.sulfur.dioxide+pH+sulphates+alcohol, data = redwine)
+par(mfrow=c(2,2))
+plot(redwinefit0)
+
+```
+
+```{r}
+whitewine<-read.table('winequality-white.csv',sep = ";",T)
+whitewinefit<-lm(quality~fixed.acidity+volatile.acidity+citric.acid+residual.sugar+chlorides+free.sulfur.dioxide+total.sulfur.dioxide+density+pH+sulphates+alcohol, data = whitewine)
+summary(whitewinefit)
+pairs(whitewine,main="pairsplot-white wine")
+cor(whitewine)
+whitewinefit1<-lm(quality~fixed.acidity+volatile.acidity+citric.acid+residual.sugar+chlorides+free.sulfur.dioxide+total.sulfur.dioxide+density+pH+sulphates+alcohol+free.sulfur.dioxide:total.sulfur.dioxide, data = whitewine)
+summary(whitewinefit1)
+coefficients(whitewinefit1)
+confint(whitewinefit1)
+vif(whitewinefit1)
+sqrt(vif(whitewinefit1))>2
+stepAIC(whitewinefit1,direction = "backward")
+leapswhitewine<-regsubsets(quality~fixed.acidity+volatile.acidity+citric.acid+residual.sugar+chlorides+free.sulfur.dioxide+total.sulfur.dioxide+density+pH+sulphates+alcohol+free.sulfur.dioxide:total.sulfur.dioxide, data = whitewine, nbest = 4)
+plot(leapswhitewine,scale="adjr2")
+whitewinefit0<-lm(quality~fixed.acidity+volatile.acidity+residual.sugar+free.sulfur.dioxide+total.sulfur.dioxide+density+pH+sulphates+alcohol+free.sulfur.dioxide:total.sulfur.dioxide, data = whitewine)
+```
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
